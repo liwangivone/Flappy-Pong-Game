@@ -1,18 +1,30 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flappy Pong Game</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    <script src="game.js"></script>
 
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;   /* Tengah horizontal */
+            align-items: center;       /* Tengah vertikal */
+            height: 100vh;             /* Tinggi penuh halaman */
+            background: white;
+        }
+
         canvas {
             display: block;
-            margin: 0 auto;
-            border: 2px solid #000;
-            background-color: #f0f0f0;
+            border: 2px solid black;
         }
-    </style>   
+    </style>
 </head>
+
 <body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+    <script src="game.js"></script>
 </body>
 </html>
