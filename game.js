@@ -42,7 +42,7 @@ function setup() {
   createCanvas(500, 500);
   ballColor = color(0, 0, 255);
   racketColor = color(0);
-  wallColors = color(255, 105, 180);
+  wallColors = color(random(255), random(255), random(255));
   ballX = width/4;  // Mengatur posisi bola di sumbu x
   ballY = height/5; // Mengatur posisi bola di sumbu y
   lastAddTime = millis();
