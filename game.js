@@ -3,18 +3,18 @@
 // 1: Game Screen
 // 2: Game-over Screen
 
-let ballX, ballY;        // Koordinat bola di sumbu x dan y
-let ballSize = 20;         // Ukuran bola
-let ballColor;  // Warna bola
-let gravity = 1;         // Nilai gravitasi awal
-let ballSpeedVert = 0;   // Kecepatan bola di sumbu vertikal
-let airFriction = 0.0001; // Gesekan yang terjadi di udara
-let friction = 0.1;      // Gesekan yang terjadi di permukaan
+let ballX, ballY;        
+let ballSize = 20;         
+let ballColor;  
+let gravity = 1;         
+let ballSpeedVert = 0;   
+let airFriction = 0.0001; 
+let friction = 0.1;      
 
-let racketColor; // Atur warna raket
-let racketWidth = 100; // Atur lebar raket
-let racketHeight = 10; // Atur tinggi raket
-let racketBounceRate = 20; // Atur rate pantulan raket
+let racketColor; 
+let racketWidth = 100; 
+let racketHeight = 10; 
+let racketBounceRate = 20; 
 
 let wallSpeed = 5;
 let wallInterval = 1000;
@@ -22,10 +22,10 @@ let lastAddTime = 0;
 let minGapHeight = 200;
 let maxGapHeight = 300;
 let wallWidth = 80;
-let wallColors;
-// Daftar array ini menyimpan data celah antara dinding.
-// (gapWallX, gapWallY, gapWallWidth, gapWallHeight]
-let walls = []; // each wall: [gapWallX, gapWallY, gapWallWidth, gapWallHeight, scoredFlag]
+
+// wallColors tidak dipakai lagi (warna per-wall disimpan dalam array)
+let walls = []; // each wall: [x, y, width, height, scoredFlag, color]
+
 let score = 0;
 let wallRadius = 50;
 
@@ -34,7 +34,7 @@ let health = 100;
 let healthDecrease = 1;
 let healthBarWidth = 60;
 
-let ballSpeedHorizon = 10; // Bisa mulai dengan 0, tapi untuk test kita beri nilai 10
+let ballSpeedHorizon = 10;
 
 let gameScreen = 0;
 
@@ -42,17 +42,12 @@ function setup() {
   createCanvas(500, 500);
   ballColor = color(0, 0, 255);
   racketColor = color(0);
-  wallColors = color(
-  random(100, 255), 
-  random(100, 255), 
-  random(100, 255)
-);
-  ballX = width/4;  // Mengatur posisi bola di sumbu x
-  ballY = height/5; // Mengatur posisi bola di sumbu y
+
+  ballX = width/4;  
+  ballY = height/5; 
   lastAddTime = millis();
 }
 
-// Tampilkan konten dari layar yang aktif
 function draw() {
   if (gameScreen == 0) {
     initScreen();
@@ -78,11 +73,11 @@ function initScreen() {
 function gameScreenFunc() {
   background(255);
   drawBall();
-  applyGravity(); // Memanggil metode implementasi gravitasi
-  keepInScreen(); // Memanggil metode menjaga bola tetap di layar
-  drawRacket(); // Memanggil metode menggambar raket
-  watchRacketBounce(); // Memanggil metode melihat bola memantul raket
-  applyHorizontalSpeed(); // Memanggil metode yang mengontrol kecepatan bola
+  applyGravity();
+  keepInScreen();
+  drawRacket();
+  watchRacketBounce();
+  applyHorizontalSpeed();
   wallAdder();
   wallHandler();
   drawHealthBar();
@@ -91,7 +86,6 @@ function gameScreenFunc() {
 
 // INPUTS
 function mousePressed() {
-  // Jika pemain mengklik layar awal maka game dimulai
   if (gameScreen == 0) {
     startGame();
   } else if (gameScreen == 2) {
@@ -99,7 +93,6 @@ function mousePressed() {
   }
 }
 
-// Metode ini mengatur variabel-variabel yang diperlukan untuk memulai game
 function startGame() {
   gameScreen = 1;
 }
@@ -114,9 +107,10 @@ function restart() {
   gameScreen = 0;
 }
 
+// BALL
 function drawBall() {
-  fill(ballColor);                            // Memberikan warna pada bola
-  ellipse(ballX, ballY, ballSize, ballSize);  // Membuat bola
+  fill(ballColor);
+  ellipse(ballX, ballY, ballSize, ballSize);
 }
 
 function applyGravity() {
@@ -137,41 +131,37 @@ function makeBounceTop(surface) {
   ballSpeedVert -= (ballSpeedVert * friction);
 }
 
-// Menjaga bola tetap berada di layar
 function keepInScreen() {
-  // Jika bola menabrak bagian bawah layar
   if (ballY + (ballSize / 2) > height) {
     makeBounceBottom(height);
   }
   
-  // Jika bola menabrak bagian atas layar
   if (ballY - (ballSize / 2) < 0) {
     makeBounceTop(0);
   }
   
-  // Jika bola menabrak bagian kiri layar
   if (ballX - (ballSize / 2) < 0) {
     makeBounceLeft(0);
   }
   
-  // Jika bola menabrak bagian kanan layar
   if (ballX + (ballSize / 2) > width) {
     makeBounceRight(width);
   }
 }
 
 function drawRacket() {
-  fill(racketColor); // Mengisi warna raket
-  rectMode(CENTER); // Mengatur perataan raket
-  rect(mouseX, mouseY, racketWidth, racketHeight); // Mengatur posisi kotak berdasarkan posisi mouse
+  fill(racketColor);
+  rectMode(CENTER);
+  rect(mouseX, mouseY, racketWidth, racketHeight);
 }
 
 function watchRacketBounce() {
   let overhead = mouseY - pmouseY;
-  if ((ballX + (ballSize / 2) > mouseX - (racketWidth / 2)) && (ballX - (ballSize / 2) < mouseX + (racketWidth / 2))) {
+  if ((ballX + (ballSize / 2) > mouseX - (racketWidth / 2)) && 
+      (ballX - (ballSize / 2) < mouseX + (racketWidth / 2))) {
     if (dist(ballX, ballY, ballX, mouseY) <= (ballSize / 2) + abs(overhead)) {
       makeBounceBottom(mouseY);
-      // Raket gerak naik
+
       if (overhead < 0) {
         ballY += overhead;
         ballSpeedVert += overhead;
@@ -198,20 +188,26 @@ function makeBounceRight(surface) {
   ballSpeedHorizon -= (ballSpeedHorizon * friction);
 }
 
+// WALL GENERATION (PERBAIKAN DI BAGIAN INI)
 function wallAdder() {
   if (millis() - lastAddTime > wallInterval) {
     let randHeight = round(random(minGapHeight, maxGapHeight));
     let randY = round(random(0, height - randHeight));
-    
-    // (gapWallX, gapWallY, gapWallWidth, gapWallHeight)
-    let randWall = [width, randY, wallWidth, randHeight, 0];
+
+    let randColor = color(
+      random(100, 255),
+      random(100, 255),
+      random(100, 255)
+    );
+
+    // (x, y, width, height, scoredFlag, color)
+    let randWall = [width, randY, wallWidth, randHeight, 0, randColor];
     walls.push(randWall);
     lastAddTime = millis();
   }
 }
 
 function wallHandler() {
-  // iterate backwards to allow safe removal
   for (let i = walls.length - 1; i >= 0; i--) {
     wallRemover(i);
     wallMover(i);
@@ -222,18 +218,23 @@ function wallHandler() {
 
 function wallDrawer(index) {
   let wall = walls[index];
-  // get gap wall settings
+
   let gapWallX = wall[0];
   let gapWallY = wall[1];
   let gapWallWidth = wall[2];
   let gapWallHeight = wall[3];
-  // draw actual walls
+
   rectMode(CORNER);
-  fill(wallColors);
-  // top wall with rounded bottom-right/left corners
+  fill(wall[5]); // warna random per-wall
+
   rect(gapWallX, 0, gapWallWidth, gapWallY, 0, 0, wallRadius, wallRadius);
-  // bottom wall with rounded top-left/top-right corners
-  rect(gapWallX, gapWallY + gapWallHeight, gapWallWidth, height - (gapWallY + gapWallHeight), wallRadius, wallRadius, 0, 0);
+  rect(
+    gapWallX,
+    gapWallY + gapWallHeight,
+    gapWallWidth,
+    height - (gapWallY + gapWallHeight),
+    wallRadius, wallRadius, 0, 0
+  );
 }
 
 function wallMover(index) {
@@ -249,7 +250,7 @@ function wallRemover(index) {
 
 function watchWallCollision(index) {
   let wall = walls[index];
-  // get gap wall settings
+
   let gapWallX = wall[0];
   let gapWallY = wall[1];
   let gapWallWidth = wall[2];
@@ -290,11 +291,13 @@ function watchWallCollision(index) {
   }
 }
 
+// HEALTH BAR
 function drawHealthBar() {
-  noStroke(); // Tanpa Border
+  noStroke();
   fill(236, 240, 241);
   rectMode(CORNER);
   rect(ballX - (healthBarWidth/2), ballY - 30, healthBarWidth, 5);
+
   if (health > 60) {
     fill(46, 204, 113);
   } else if (health > 30) {
@@ -302,8 +305,13 @@ function drawHealthBar() {
   } else {
     fill(231, 76, 60);
   }
-  rectMode(CORNER);
-  rect(ballX - (healthBarWidth/2), ballY - 30, healthBarWidth * (health/maxHealth), 5);
+
+  rect(
+    ballX - (healthBarWidth/2),
+    ballY - 30,
+    healthBarWidth * (health/maxHealth),
+    5
+  );
 }
 
 function decreaseHealth() {
@@ -313,6 +321,7 @@ function decreaseHealth() {
   }
 }
 
+// GAME OVER
 function gameOverScreen() {
   background(0);
   textAlign(CENTER);
@@ -324,6 +333,7 @@ function gameOverScreen() {
   printScore();
 }
 
+// SCORE
 function incrementScore() {
   score++;
 }
